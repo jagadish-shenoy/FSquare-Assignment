@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">Assignment</string>
     <string name="activity_venue_search">Search Venue</string>
+
+    <string name="hint_venue_location">Enter a place</string>
+
+    <string name="error_invalid_search_request">Error, Please check the location!</string>
+
+    <string name="error_network_search_reqeust">Error, Please check the network connection!</string>
+
+    <string name="error_fetching_venue_details">Error, count not fetch venue details</string>
+
+    <string name="error_network_venue_details">Error, Please check the network connection!</string>
+
+
+    <string name="description">Description</string>
+
+    <string name="contact">Contact</string>
+
+    <string name="address">Address</string>
+
+    <string name="rating">Rating</string>
+
 </resources>

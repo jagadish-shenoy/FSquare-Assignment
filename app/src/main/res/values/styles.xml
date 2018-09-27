@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="searchTextAppearance">
+        <item name="android:textAppearance">@android:style/TextAppearance.DeviceDefault.Medium
+        </item>
+    </style>
+
 </resources>
