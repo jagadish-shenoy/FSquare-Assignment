@@ -30,6 +30,7 @@ data class VenueDetailsResult(val status:Status, val venueDetails: VenueDetails?
 data class VenueDetails(val id:String,
                         val name:String,
                         val description:String,
+                        val photoUrl: String,
                         val address:String,
                         val contactPhone:String,
                         val rating:String): Parcelable
