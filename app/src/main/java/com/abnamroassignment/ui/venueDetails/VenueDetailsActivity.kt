@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.abnamroassignment.R
 import com.abnamroassignment.foreaquare.VenueDetails
+import kotlinx.android.synthetic.main.activity_venue_details.*
 
 private const val EXTRA_VENUE_DETAILS = "venueDetails"
 
@@ -17,9 +18,14 @@ class VenueDetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_venue_details)
         val venueDetails: VenueDetails = intent.extras!!.getParcelable(EXTRA_VENUE_DETAILS)!!
 
-        title = (venueDetails.name)
+        venueDetails.apply {
+            title = name
+            venueDescription.text = description
+            venueContact.text = contactPhone
+            venueAddress.text = address
+            venueRating.text = rating
+        }
     }
-
 
     companion object {
         fun start(venueDetails: VenueDetails, context: Context) {
