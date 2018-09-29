@@ -3,7 +3,6 @@ package com.abnamroassignment.search
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
-import com.abnamroassignment.foreaquare.FourSquareRequester
 import com.abnamroassignment.foreaquare.VenueDetailsResult
 import com.abnamroassignment.foreaquare.VenueSearchResult
 

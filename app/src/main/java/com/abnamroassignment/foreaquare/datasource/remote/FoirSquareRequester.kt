@@ -1,6 +1,7 @@
-package com.abnamroassignment.foreaquare
+package com.abnamroassignment.foreaquare.datasource.remote
 
 import com.abnamroassignment.BuildConfig
+import com.abnamroassignment.foreaquare.*
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -9,7 +10,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FourSquareRequester(val venueCallback:FourSquareRequester.VenueCallback) {
+class FourSquareRequester(val venueCallback: VenueCallback) {
 
     private val venueService: VenueService = createVenueService()
 

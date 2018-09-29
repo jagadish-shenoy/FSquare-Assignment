@@ -1,5 +1,8 @@
-package com.abnamroassignment.foreaquare
+package com.abnamroassignment.foreaquare.datasource.remote
 
+import com.abnamroassignment.foreaquare.Status
+import com.abnamroassignment.foreaquare.VenueDetails
+import com.abnamroassignment.foreaquare.VenueDetailsResult
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
