@@ -5,36 +5,45 @@ import com.abnamroassignment.foreaquare.*
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FourSquareRequester(val venueCallback: VenueCallback) {
+class RetrofitDataSource(callback: DataSource.Callback) : DataSource(callback) {
 
     private val venueService: VenueService = createVenueService()
 
-    interface VenueCallback {
-
-        fun onVenueSearchResponse(venueSearchResult: VenueSearchResult)
-
-        fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult)
-    }
-
-    fun searchForVenuesNear(location:String) {
-
-        venueService.searchVenues( location, VENUE_SEARCH_RADIUS, VENUE_SEARCH_RESULT_LIMIT).enqueue(
-                object : Callback<VenueSearchResult> {
+    override fun searchVenues(location: String, limit: Int) {
+        venueService.searchVenues(location, VENUE_SEARCH_RADIUS, limit).enqueue(
+                object : retrofit2.Callback<VenueSearchResult> {
 
                     override fun onFailure(call: Call<VenueSearchResult>?, t: Throwable?) {
-                        venueCallback.onVenueSearchResponse(NetworkErrorSearchResult)
+                        callback.onVenueSearchResponse(NetworkErrorSearchResult)
                     }
 
                     override fun onResponse(call: Call<VenueSearchResult>?, httpResponse: Response<VenueSearchResult>?) {
                         if(httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            venueCallback.onVenueSearchResponse(InvalidRequestSearchResult)
+                            callback.onVenueSearchResponse(InvalidRequestSearchResult)
                         } else {
-                            venueCallback.onVenueSearchResponse(httpResponse.body()!!)
+                            callback.onVenueSearchResponse(httpResponse.body()!!)
+                        }
+                    }
+                }
+        )
+    }
+
+    override fun fetchVenueDetails(venueId: String) {
+        venueService.getVenueDetails(venueId).enqueue(
+                object : retrofit2.Callback<VenueDetailsResult> {
+                    override fun onFailure(call: Call<VenueDetailsResult>?, t: Throwable?) {
+                        callback.onVenueDetailsResponse(NetworkErrorVenueDetailsResult)
+                    }
+
+                    override fun onResponse(call: Call<VenueDetailsResult>?, httpResponse: Response<VenueDetailsResult>?) {
+                        if (httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
+                            callback.onVenueDetailsResponse(InvalidRequestVenueDetailsResult)
+                        } else {
+                            callback.onVenueDetailsResponse(httpResponse.body()!!)
                         }
                     }
                 }
@@ -42,21 +51,7 @@ class FourSquareRequester(val venueCallback: VenueCallback) {
     }
 
     fun fetchVenueDetails(venue: Venue) {
-        venueService.getVenueDetails(venue.id).enqueue(
-                object:Callback<VenueDetailsResult> {
-                    override fun onFailure(call: Call<VenueDetailsResult>?, t: Throwable?) {
-                        venueCallback.onVenueDetailsResponse(NetworkErrorVenueDetailsResult)
-                    }
 
-                    override fun onResponse(call: Call<VenueDetailsResult>?, httpResponse: Response<VenueDetailsResult>?) {
-                        if(httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            venueCallback.onVenueDetailsResponse(InvalidRequestVenueDetailsResult)
-                        } else {
-                            venueCallback.onVenueDetailsResponse(httpResponse.body()!!)
-                        }
-                    }
-                }
-        )
     }
 
     private fun createVenueService(): VenueService {

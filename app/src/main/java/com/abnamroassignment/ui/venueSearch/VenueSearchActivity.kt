@@ -78,14 +78,14 @@ class VenueSearchActivity : AppCompatActivity(), VenueItemClickCallback {
     }
 
     override fun onVenueItemClicked(venue: Venue) {
-        viewModel.foreaquareRequestor.fetchVenueDetails(venue)
+        viewModel.foreSquareManager.fetchVenueDetails(venue)
     }
 
     private fun performSearch() {
         val location = searchLocation.text.toString()
         if (!location.isEmpty()) {
             imm.hideSoftInputFromWindow(searchResultContainer.windowToken, 0)
-            viewModel.foreaquareRequestor.searchForVenuesNear(location)
+            viewModel.foreSquareManager.searchVenues(location)
         }
     }
 
