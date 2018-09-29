@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.abnamroassignment.R
 import com.abnamroassignment.foreaquare.VenueDetails
+import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_venue_details.*
 
 private const val EXTRA_VENUE_DETAILS = "venueDetails"
@@ -20,6 +22,11 @@ class VenueDetailsActivity : AppCompatActivity() {
 
         venueDetails.apply {
             title = name
+            if (photoUrl.isEmpty()) {
+                venueImage.visibility = View.GONE
+            } else {
+                Glide.with(this@VenueDetailsActivity).load(photoUrl).into(venueImage)
+            }
             venueDescription.text = description
             venueContact.text = contactPhone
             venueAddress.text = address
