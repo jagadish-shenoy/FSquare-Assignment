@@ -1,5 +1,6 @@
 package com.abnamroassignment.foreaquare.datasource.remote
 
+import android.content.Context
 import com.abnamroassignment.BuildConfig
 import com.abnamroassignment.foreaquare.*
 import com.google.gson.GsonBuilder
@@ -9,7 +10,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitDataSource(callback: DataSource.Callback) : DataSource(callback) {
+class RetrofitDataSource(context: Context) : DataSource(context) {
 
     private val venueService: VenueService = createVenueService()
 
@@ -18,14 +19,14 @@ class RetrofitDataSource(callback: DataSource.Callback) : DataSource(callback) {
                 object : retrofit2.Callback<VenueSearchResult> {
 
                     override fun onFailure(call: Call<VenueSearchResult>?, t: Throwable?) {
-                        callback.onVenueSearchResponse(NetworkErrorSearchResult)
+                        callback?.onVenueSearchResponse(this@RetrofitDataSource, NetworkErrorSearchResult)
                     }
 
                     override fun onResponse(call: Call<VenueSearchResult>?, httpResponse: Response<VenueSearchResult>?) {
                         if(httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            callback.onVenueSearchResponse(InvalidRequestSearchResult)
+                            callback?.onVenueSearchResponse(this@RetrofitDataSource, InvalidRequestSearchResult)
                         } else {
-                            callback.onVenueSearchResponse(httpResponse.body()!!)
+                            callback?.onVenueSearchResponse(this@RetrofitDataSource, httpResponse.body()!!)
                         }
                     }
                 }
@@ -36,22 +37,18 @@ class RetrofitDataSource(callback: DataSource.Callback) : DataSource(callback) {
         venueService.getVenueDetails(venueId).enqueue(
                 object : retrofit2.Callback<VenueDetailsResult> {
                     override fun onFailure(call: Call<VenueDetailsResult>?, t: Throwable?) {
-                        callback.onVenueDetailsResponse(NetworkErrorVenueDetailsResult)
+                        callback?.onVenueDetailsResponse(this@RetrofitDataSource, NetworkErrorVenueDetailsResult)
                     }
 
                     override fun onResponse(call: Call<VenueDetailsResult>?, httpResponse: Response<VenueDetailsResult>?) {
                         if (httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            callback.onVenueDetailsResponse(InvalidRequestVenueDetailsResult)
+                            callback?.onVenueDetailsResponse(this@RetrofitDataSource, InvalidRequestVenueDetailsResult)
                         } else {
-                            callback.onVenueDetailsResponse(httpResponse.body()!!)
+                            callback?.onVenueDetailsResponse(this@RetrofitDataSource, httpResponse.body()!!)
                         }
                     }
                 }
         )
-    }
-
-    fun fetchVenueDetails(venue: Venue) {
-
     }
 
     private fun createVenueService(): VenueService {

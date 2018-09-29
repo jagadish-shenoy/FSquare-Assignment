@@ -1,9 +1,12 @@
 package com.abnamroassignment.foreaquare
 
+import android.content.Context
 import com.abnamroassignment.foreaquare.datasource.local.DatabaseDataSource
 import com.abnamroassignment.foreaquare.datasource.remote.RetrofitDataSource
 
-abstract class DataSource(protected val callback:DataSource.Callback) {
+abstract class DataSource(protected val context: Context) {
+
+    var callback: DataSource.Callback? = null
 
     abstract fun searchVenues(location:String, limit:Int)
 
@@ -12,41 +15,62 @@ abstract class DataSource(protected val callback:DataSource.Callback) {
 
     interface Callback {
 
+        fun onVenueSearchResponse(dataSource: DataSource, venueSearchResult: VenueSearchResult)
+
+        fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult)
+    }
+
+}
+
+abstract class StorageDataSource(context: Context) : DataSource(context) {
+
+    abstract fun saveSearchResult(venues: List<Venue>)
+
+    abstract fun saveVenueDetails(venueDetails: VenueDetails)
+}
+
+class ForeSquareManager private constructor(private val callback: ForeSquareManagerCallback,
+                                            private val localDataSource: StorageDataSource,
+                                            private val remoteDataSource: DataSource) : DataSource.Callback {
+
+    init {
+        localDataSource.callback = this
+        remoteDataSource.callback = this
+    }
+
+    interface ForeSquareManagerCallback {
+
         fun onVenueSearchResponse(venueSearchResult: VenueSearchResult)
 
         fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult)
     }
 
-}
+    override fun onVenueSearchResponse(dataSource: DataSource, venueSearchResult: VenueSearchResult) {
+        if (dataSource.isRemoteDataSource()) {
+            if (!venueSearchResult.venues.isEmpty()) {
+                localDataSource.saveSearchResult(venueSearchResult.venues)
+            }
+        }
+        callback.onVenueSearchResponse(venueSearchResult)
+    }
 
-class ForeSquareManager private constructor(private val callback: DataSource.Callback,
-                                            private val localDataSource: DataSource,
-                                            private val remoteDataSource:DataSource) {
+    override fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult) {
+        if (dataSource.isRemoteDataSource()) {
+            venueDetailsResult.venueDetails?.apply { localDataSource.saveVenueDetails(this) }
+        }
+        callback.onVenueDetailsResponse(venueDetailsResult)
+    }
 
+    interface Callback {
 
-    constructor(callback: DataSource.Callback) :this(callback,
+        fun onVenueSearchResponse(venueSearchResult: VenueSearchResult)
 
-            DatabaseDataSource(object : DataSource.Callback {
-                override fun onVenueSearchResponse(venueSearchResult: VenueSearchResult) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
+        fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult)
+    }
 
-                override fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-
-            }),
-
-            RetrofitDataSource(object:DataSource.Callback {
-                override fun onVenueSearchResponse(venueSearchResult: VenueSearchResult) {
-                    callback.onVenueSearchResponse(venueSearchResult)
-                }
-
-                override fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult) {
-                    callback.onVenueDetailsResponse(venueDetailsResult)
-                }
-
-            }))
+    constructor(context: Context, callback: ForeSquareManagerCallback) : this(callback,
+            DatabaseDataSource(context),
+            RetrofitDataSource(context))
 
 
     fun searchVenues(location: String) {
@@ -57,3 +81,5 @@ class ForeSquareManager private constructor(private val callback: DataSource.Cal
         remoteDataSource.fetchVenueDetails(venue.id)
     }
 }
+
+private fun DataSource.isRemoteDataSource() = this is RetrofitDataSource

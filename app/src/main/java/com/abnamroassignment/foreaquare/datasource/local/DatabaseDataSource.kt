@@ -1,16 +1,26 @@
 package com.abnamroassignment.foreaquare.datasource.local
 
-import com.abnamroassignment.foreaquare.DataSource
+import android.content.Context
+import com.abnamroassignment.foreaquare.StorageDataSource
+import com.abnamroassignment.foreaquare.Venue
+import com.abnamroassignment.foreaquare.VenueDetails
 
-class DatabaseDataSource(callback:DataSource.Callback):DataSource(callback) {
+class DatabaseDataSource(context: Context) : StorageDataSource(context) {
 
+    override fun saveSearchResult(venues: List<Venue>) {
+
+    }
+
+    override fun saveVenueDetails(venueDetails: VenueDetails) {
+
+    }
 
 
     override fun searchVenues(location: String, limit: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 
     override fun fetchVenueDetails(venueId: String) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+
     }
 }
