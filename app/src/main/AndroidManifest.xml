@@ -15,14 +15,17 @@
         <activity
             android:name=".ui.venueSearch.VenueSearchActivity"
             android:label="@string/activity_venue_search"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.venueDetails.VenueDetailsActivity" />
+        <activity
+            android:name=".ui.venueDetails.VenueDetailsActivity"
+            android:parentActivityName=".ui.venueSearch.VenueSearchActivity" />
     </application>
 
 </manifest>
