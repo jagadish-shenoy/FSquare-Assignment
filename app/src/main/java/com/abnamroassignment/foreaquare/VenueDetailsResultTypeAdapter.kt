@@ -29,7 +29,9 @@ class VenueDetailsResultTypeAdapter:JsonDeserializer<VenueDetailsResult> {
 
     private fun extractAddressFromLocation(venueJson: JsonObject) =
             venueJson.getAsJsonObject("location")
-                    .getAsJsonArray("formattedAddress")?.asJsonArray?.joinToString(separator = "\n")
+                    .getAsJsonArray("formattedAddress")?.asJsonArray?.joinToString(separator = "\n") {
+                it.asString
+            }
                     ?: "N/A"
 
     private fun extractPhoneContact(venueJson: JsonObject) =
