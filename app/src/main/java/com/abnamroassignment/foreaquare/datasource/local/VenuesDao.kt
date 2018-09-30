@@ -15,6 +15,6 @@ interface VenuesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertVenues(vararg venues: Venue)
 
-    @Query("select * from venue")
-    fun getAllVenues(): List<Venue>
+    @Query("select id from venue")
+    fun getAllVenueIds(): List<String>
 }

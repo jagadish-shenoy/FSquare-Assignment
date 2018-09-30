@@ -36,19 +36,29 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
     override fun fetchVenueDetails(venueId: String) {
         venueService.getVenueDetails(venueId).enqueue(
                 object : retrofit2.Callback<VenueDetailsResult> {
-                    override fun onFailure(call: Call<VenueDetailsResult>?, t: Throwable?) {
+                    override fun onFailure(call: Call<VenueDetailsResult>, t: Throwable?) {
                         callback?.onVenueDetailsResponse(this@RetrofitDataSource, NetworkErrorVenueDetailsResult)
                     }
 
-                    override fun onResponse(call: Call<VenueDetailsResult>?, httpResponse: Response<VenueDetailsResult>?) {
-                        if (httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            callback?.onVenueDetailsResponse(this@RetrofitDataSource, InvalidRequestVenueDetailsResult)
-                        } else {
-                            callback?.onVenueDetailsResponse(this@RetrofitDataSource, httpResponse.body()!!)
-                        }
+                    override fun onResponse(call: Call<VenueDetailsResult>, httpResponse: Response<VenueDetailsResult>) {
+                        val venueDetailsResult = extractVenueDetailsResult(httpResponse)
+                        callback?.onVenueDetailsResponse(this@RetrofitDataSource, venueDetailsResult)
                     }
                 }
         )
+    }
+
+    override fun fetchVenueDetailsSync(venueId: String): VenueDetailsResult {
+        val response = venueService.getVenueDetails(venueId).execute()
+        return extractVenueDetailsResult(response)
+    }
+
+    private fun extractVenueDetailsResult(httpResponse: Response<VenueDetailsResult>): VenueDetailsResult {
+        return if (!httpResponse.isSuccessful || httpResponse.body() == null) {
+            InvalidRequestVenueDetailsResult
+        } else {
+            httpResponse.body()!!
+        }
     }
 
     private fun createVenueService(): VenueService {

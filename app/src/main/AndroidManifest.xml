@@ -26,6 +26,9 @@
         <activity
             android:name=".ui.venueDetails.VenueDetailsActivity"
             android:parentActivityName=".ui.venueSearch.VenueSearchActivity" />
-    </application>
 
+        <service
+            android:name=".foreaquare.sync.VenueSyncService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+    </application>
 </manifest>

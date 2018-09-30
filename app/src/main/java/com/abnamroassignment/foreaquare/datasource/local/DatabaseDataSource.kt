@@ -21,10 +21,15 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
     }
 
     override fun fetchVenueDetails(venueId: String) {
-        val venueDetails = venueDatabase.venueDetailsDao().getVenueDetails(venueId)
-
-        val status = if (venueDetails == null) Status.NETWORK_ERROR else Status.SUCCESS
-
-        callback?.onVenueDetailsResponse(this, VenueDetailsResult(status, venueDetails))
+        val venueDetailsResult = fetchVenueDetailsSync(venueId)
+        callback?.onVenueDetailsResponse(this, venueDetailsResult)
     }
+
+    override fun fetchVenueDetailsSync(venueId: String): VenueDetailsResult {
+        val venueDetails = venueDatabase.venueDetailsDao().getVenueDetails(venueId)
+        val status = if (venueDetails == null) Status.NETWORK_ERROR else Status.SUCCESS
+        return VenueDetailsResult(status, venueDetails)
+    }
+
+    override fun getAllVenueIds() = venueDatabase.venuesDao().getAllVenueIds()
 }
