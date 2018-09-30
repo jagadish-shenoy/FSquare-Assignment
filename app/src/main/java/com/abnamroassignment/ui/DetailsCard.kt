@@ -12,14 +12,19 @@ import kotlinx.android.synthetic.main.layout_details_card.view.*
 
 class DetailsCard:CardView {
 
-    constructor(context: Context) : this(context, null, 0)
+    constructor(context: Context) : this(context, null, 0) {
+        initView()
+    }
 
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0) {
+        initView()
+    }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+        initView()
+    }
 
-    init {
-
+    private fun initView() {
         // Set the CardView layoutParams
         val layoutParams = FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
