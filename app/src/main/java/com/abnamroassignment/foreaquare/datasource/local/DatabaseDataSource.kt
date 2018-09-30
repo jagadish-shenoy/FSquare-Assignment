@@ -7,20 +7,22 @@ import com.abnamroassignment.foreaquare.VenueDetails
 
 class DatabaseDataSource(context: Context) : StorageDataSource(context) {
 
-    override fun saveSearchResult(venues: List<Venue>) {
+    private val venueDatabase = VenueDatabase.getInMemoryDatabase(context)
 
+    override fun saveSearchResult(venues: List<Venue>) {
+        venueDatabase.venuesDao().insertVenues(*venues.toTypedArray())
     }
 
     override fun saveVenueDetails(venueDetails: VenueDetails) {
-
+        venueDatabase.venueDetailsDao().insertVenueDetails(venueDetails)
     }
 
 
     override fun searchVenues(location: String, limit: Int) {
-
+        venueDatabase.venuesDao().getVenuesForLocation(location, limit)
     }
 
     override fun fetchVenueDetails(venueId: String) {
-
+        venueDatabase.venueDetailsDao().getVenueDetails(venueId)
     }
 }
