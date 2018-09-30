@@ -1,13 +1,9 @@
 package com.abnamroassignment.ui.venueSearch
 
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import com.abnamroassignment.R
 import com.abnamroassignment.foreaquare.Venue
-import kotlinx.android.synthetic.main.layout_search_result.view.*
+import com.abnamroassignment.ui.DetailsCard
 
 internal class VenueSearchResultAdapter(private val callback:VenueItemClickCallback): RecyclerView.Adapter<SearchResultViewHolder>() {
 
@@ -23,7 +19,7 @@ internal class VenueSearchResultAdapter(private val callback:VenueItemClickCallb
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): SearchResultViewHolder {
-        val searchResultView = LayoutInflater.from(parent.context).inflate(R.layout.layout_search_result, parent, false)
+        val searchResultView = DetailsCard(parent.context)
         return SearchResultViewHolder(searchResultView)
     }
 
@@ -31,19 +27,11 @@ internal class VenueSearchResultAdapter(private val callback:VenueItemClickCallb
 
     override fun onBindViewHolder(viewHolder: SearchResultViewHolder, position: Int) {
         venues[position].apply {
-            viewHolder.venueName.text = name
-            viewHolder.venueAddress.text = address
-            viewHolder.searchResultContainer.setOnClickListener { callback.onVenueItemClicked(this) }
+            viewHolder.detailsCard.setTitle(name)
+            viewHolder.detailsCard.setDescription(address)
+            viewHolder.detailsCard.setOnClickListener { callback.onVenueItemClicked(this) }
         }
     }
 }
 
-class SearchResultViewHolder(view: View): RecyclerView.ViewHolder(view) {
-
-    val searchResultContainer:View = view.searchResultContainer
-
-    val venueName:TextView = view.venueName
-
-    val venueAddress:TextView = view.venueAddress
-
-}
+class SearchResultViewHolder(val detailsCard: DetailsCard) : RecyclerView.ViewHolder(detailsCard)
