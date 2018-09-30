@@ -6,18 +6,17 @@ import android.support.v7.widget.CardView
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
 import com.abnamroassignment.R
 import kotlinx.android.synthetic.main.layout_details_card.view.*
 
 class DetailsCard:CardView {
 
-    constructor(context: Context) : this(context, null, R.attr.detailsCardStyle)
+    constructor(context: Context) : this(context, null, 0)
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs, R.attr.detailsCardStyle)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, R.attr.detailsCardStyle)
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
 
@@ -30,13 +29,14 @@ class DetailsCard:CardView {
 
         this.layoutParams = layoutParams
         elevation = getDimensionInPixel(2f).toFloat()
+        radius = getDimensionInPixel(2f).toFloat()
 
         val layoutInflater  = LayoutInflater.from(context)
         layoutInflater.inflate(R.layout.layout_details_card, this, true)
     }
 
-    fun setTitle(@StringRes titleResouece:Int) {
-        setTitle(resources.getString(titleResouece))
+    fun setTitle(@StringRes titleResource: Int) {
+        setTitle(resources.getString(titleResource))
     }
 
     fun setTitle(titleText:String) {

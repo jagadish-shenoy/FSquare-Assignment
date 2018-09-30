@@ -27,10 +27,17 @@ class VenueDetailsActivity : AppCompatActivity() {
             } else {
                 Glide.with(this@VenueDetailsActivity).load(photoUrl).into(venueImage)
             }
-            venueDescription.text = description
-            venueContact.text = contactPhone
-            venueAddress.text = address
-            venueRating.text = rating
+            venueDescriptionCard.setTitle(R.string.description)
+            venueDescriptionCard.setDescription(description)
+
+            venueContactCard.setTitle(R.string.contact)
+            venueContactCard.setDescription(contactPhone)
+
+            venueAddressCard.setTitle(R.string.address)
+            venueAddressCard.setDescription(address)
+
+            venueRatingCard.setTitle(R.string.rating)
+            venueRatingCard.setDescription(rating)
         }
     }
 
