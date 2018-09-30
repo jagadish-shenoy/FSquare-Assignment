@@ -36,6 +36,10 @@ class VenueSearchActivity : AppCompatActivity(), VenueItemClickCallback {
 
                 Status.NETWORK_ERROR,
                 Status.CACHE_MISS -> showSnackbar(R.string.error_network_search_reqeust)
+
+                Status.SUCCESS -> if (searchResult.venues.isEmpty()) {
+                    showSnackbar(R.string.warning_no_venues_found)
+                }
             }
             adapter.venues = venues
         }

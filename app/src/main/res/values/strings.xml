@@ -12,6 +12,7 @@
 
     <string name="error_network_venue_details">Error, Please check the network connection!</string>
 
+    <string name="warning_no_venues_found">No Venues were found for the location</string>
 
     <string name="description">Description</string>
 
