@@ -1,4 +1,4 @@
-package com.abnamroassignment.search
+package com.abnamroassignment.ui.venueSearch.viewmodel
 
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel

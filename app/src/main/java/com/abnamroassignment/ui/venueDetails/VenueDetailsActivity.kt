@@ -14,7 +14,6 @@ private const val EXTRA_VENUE_DETAILS = "venueDetails"
 
 class VenueDetailsActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_venue_details)
