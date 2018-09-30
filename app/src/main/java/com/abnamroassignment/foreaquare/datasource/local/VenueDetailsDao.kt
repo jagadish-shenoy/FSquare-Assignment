@@ -13,5 +13,5 @@ interface VenueDetailsDao {
     fun insertVenueDetails(venueDetails: VenueDetails)
 
     @Query("Select * from venuedetails where id = :id")
-    fun getVenueDetails(id:String):VenueDetails
+    fun getVenueDetails(id: String): VenueDetails?
 }

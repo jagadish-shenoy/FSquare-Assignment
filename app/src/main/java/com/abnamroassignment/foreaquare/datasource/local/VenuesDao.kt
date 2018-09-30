@@ -9,11 +9,11 @@ import com.abnamroassignment.foreaquare.Venue
 @Dao
 interface VenuesDao {
 
-   @Query("select * from venue where address like :location LIMIT :limit")
-   fun getVenuesForLocation(location: String, limit: Int): List<Venue>
+    @Query("select * from venue where address like :location limit :limit")
+    fun getVenuesForLocation(location: String, limit: Int): List<Venue>
 
-   @Insert(onConflict = OnConflictStrategy.REPLACE)
-   fun insertVenues(vararg venues:Venue)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertVenues(vararg venues: Venue)
 
     @Query("select * from venue")
     fun getAllVenues(): List<Venue>

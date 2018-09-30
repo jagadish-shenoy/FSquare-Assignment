@@ -1,9 +1,7 @@
 package com.abnamroassignment.foreaquare.datasource.local
 
 import android.content.Context
-import com.abnamroassignment.foreaquare.StorageDataSource
-import com.abnamroassignment.foreaquare.Venue
-import com.abnamroassignment.foreaquare.VenueDetails
+import com.abnamroassignment.foreaquare.*
 
 class DatabaseDataSource(context: Context) : StorageDataSource(context) {
 
@@ -17,12 +15,16 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
         venueDatabase.venueDetailsDao().insertVenueDetails(venueDetails)
     }
 
-
     override fun searchVenues(location: String, limit: Int) {
-        venueDatabase.venuesDao().getVenuesForLocation(location, limit)
+        val venues = venueDatabase.venuesDao().getVenuesForLocation("%$location%", limit)
+        callback?.onVenueSearchResponse(this, VenueSearchResult(Status.SUCCESS, venues))
     }
 
     override fun fetchVenueDetails(venueId: String) {
-        venueDatabase.venueDetailsDao().getVenueDetails(venueId)
+        val venueDetails = venueDatabase.venueDetailsDao().getVenueDetails(venueId)
+
+        val status = if (venueDetails == null) Status.NETWORK_ERROR else Status.SUCCESS
+
+        callback?.onVenueDetailsResponse(this, VenueDetailsResult(status, venueDetails))
     }
 }

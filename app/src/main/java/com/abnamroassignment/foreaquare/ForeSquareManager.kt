@@ -3,14 +3,16 @@ package com.abnamroassignment.foreaquare
 import android.content.Context
 import com.abnamroassignment.foreaquare.datasource.local.DatabaseDataSource
 import com.abnamroassignment.foreaquare.datasource.remote.RetrofitDataSource
+import com.abnamroassignment.networking.ConnectivityChecker
+import com.abnamroassignment.networking.ConnectivityCheckerImpl
 
 abstract class DataSource(protected val context: Context) {
 
     var callback: DataSource.Callback? = null
 
-    abstract fun searchVenues(location:String, limit:Int)
+    abstract fun searchVenues(location: String, limit: Int)
 
-    abstract fun fetchVenueDetails(venueId:String)
+    abstract fun fetchVenueDetails(venueId: String)
 
 
     interface Callback {
@@ -30,6 +32,7 @@ abstract class StorageDataSource(context: Context) : DataSource(context) {
 }
 
 class ForeSquareManager private constructor(private val callback: ForeSquareManagerCallback,
+                                            private val connectivityChecker: ConnectivityChecker,
                                             private val localDataSource: StorageDataSource,
                                             private val remoteDataSource: DataSource) : DataSource.Callback {
 
@@ -37,6 +40,11 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
         localDataSource.callback = this
         remoteDataSource.callback = this
     }
+
+    constructor(context: Context, callback: ForeSquareManagerCallback) : this(callback,
+            ConnectivityCheckerImpl(context),
+            DatabaseDataSource(context),
+            RetrofitDataSource(context))
 
     interface ForeSquareManagerCallback {
 
@@ -61,25 +69,15 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
         callback.onVenueDetailsResponse(venueDetailsResult)
     }
 
-    interface Callback {
-
-        fun onVenueSearchResponse(venueSearchResult: VenueSearchResult)
-
-        fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult)
-    }
-
-    constructor(context: Context, callback: ForeSquareManagerCallback) : this(callback,
-            DatabaseDataSource(context),
-            RetrofitDataSource(context))
-
-
     fun searchVenues(location: String) {
-        remoteDataSource.searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
+        getDataSource().searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
     }
 
     fun fetchVenueDetails(venue: Venue) {
-        remoteDataSource.fetchVenueDetails(venue.id)
+        getDataSource().fetchVenueDetails(venue.id)
     }
+
+    private fun getDataSource() = if (connectivityChecker.isNetworkConnected()) remoteDataSource else localDataSource
 }
 
 private fun DataSource.isRemoteDataSource() = this is RetrofitDataSource
