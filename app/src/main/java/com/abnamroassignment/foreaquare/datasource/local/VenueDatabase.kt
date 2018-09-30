@@ -22,8 +22,6 @@ abstract class VenueDatabase : RoomDatabase() {
         fun getInMemoryDatabase(context: Context): VenueDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.inMemoryDatabaseBuilder(context.applicationContext, VenueDatabase::class.java)
-                        // To simplify the codelab, allow queries on the main thread.
-                        // Don't do this on a real app! See PersistenceBasicSample for an example.
                         .allowMainThreadQueries()
                         .build()
             }

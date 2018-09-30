@@ -11,6 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+/**
+ * [DataSource] which fetches the Venue Details from Network
+ */
 class RetrofitDataSource(context: Context) : DataSource(context) {
 
     private val venueService: VenueService = createVenueService()
@@ -59,6 +62,9 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
             .registerTypeAdapter(VenueDetails::class.java, VenueDetailsResultTypeAdapter())
             .create())
 
+    /**
+     * Helps create an [OkHttpClient] with default request Query parameters.
+     */
     private fun createClientWithDefaultParams(): OkHttpClient {
         val httpClientBuilder = OkHttpClient.Builder()
 
@@ -78,6 +84,7 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
             chain.proceed(request)
         }
 
+        //Keep the connect times short
         httpClientBuilder.connectTimeout(10, TimeUnit.SECONDS)
         httpClientBuilder.readTimeout(10, TimeUnit.SECONDS)
 

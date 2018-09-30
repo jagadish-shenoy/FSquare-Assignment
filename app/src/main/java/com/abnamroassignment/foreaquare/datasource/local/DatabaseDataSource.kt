@@ -3,6 +3,9 @@ package com.abnamroassignment.foreaquare.datasource.local
 import android.content.Context
 import com.abnamroassignment.foreaquare.*
 
+/**
+ * Datasource which fetches the data from local database + helps cache the results.
+ */
 class DatabaseDataSource(context: Context) : StorageDataSource(context) {
 
     private val venueDatabase = VenueDatabase.getInMemoryDatabase(context)

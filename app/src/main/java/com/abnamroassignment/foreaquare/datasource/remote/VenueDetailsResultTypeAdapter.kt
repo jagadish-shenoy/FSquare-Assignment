@@ -7,6 +7,11 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.lang.reflect.Type
 
+/**
+ * The Forusquare API JSON is heavily nested. JsonDeserializer to rescue.
+ *
+ * TODO Convert the attribute reading from JsonObject to extension methods for readability
+ */
 class VenueDetailsResultTypeAdapter : JsonDeserializer<VenueDetails> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): VenueDetails {
@@ -17,13 +22,13 @@ class VenueDetailsResultTypeAdapter : JsonDeserializer<VenueDetails> {
         val venueDetailsJson = venueDetailsResponseJson.getAsJsonObject("venue")
 
         return VenueDetails(
-                        venueDetailsJson.get("id").asString,
-                        venueDetailsJson.get("name").asString,
-                        venueDetailsJson.get("description")?.asString ?: "N/A",
-                        extractPhoto(venueDetailsJson),
-                        extractAddressFromLocation(venueDetailsJson),
-                        extractPhoneContact(venueDetailsJson),
-                        venueDetailsJson.get("rating")?.asString ?: "N/A"
+                venueDetailsJson.get("id").asString,
+                venueDetailsJson.get("name").asString,
+                venueDetailsJson.get("description")?.asString ?: "N/A",
+                extractPhoto(venueDetailsJson),
+                extractAddressFromLocation(venueDetailsJson),
+                extractPhoneContact(venueDetailsJson),
+                venueDetailsJson.get("rating")?.asString ?: "N/A"
         )
     }
 
@@ -35,7 +40,7 @@ class VenueDetailsResultTypeAdapter : JsonDeserializer<VenueDetails> {
                     ?: "N/A"
 
     private fun extractPhoneContact(venueJson: JsonObject) =
-        venueJson.getAsJsonObject("contact")?.get("formattedPhone")?.asString?:"N/A"
+            venueJson.getAsJsonObject("contact")?.get("formattedPhone")?.asString?:"N/A"
 
     private fun extractPhoto(venueJson: JsonObject): String {
         val group = extractGroupOfTypeVenue(venueJson)

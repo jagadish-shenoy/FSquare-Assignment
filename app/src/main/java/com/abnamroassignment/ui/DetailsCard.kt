@@ -10,6 +10,10 @@ import android.widget.FrameLayout
 import com.abnamroassignment.R
 import kotlinx.android.synthetic.main.layout_details_card.view.*
 
+/**
+ * Custom View for showing a [CardView] with a title and description.
+ * Used for search result and Venue details screen
+ */
 class DetailsCard:CardView {
 
     constructor(context: Context) : this(context, null, 0) {
@@ -52,9 +56,5 @@ class DetailsCard:CardView {
         description.text = descriptionText
     }
 
-    private fun getDimensionInPixel(dp:Float):Int
-         = TypedValue.applyDimension(
-                 TypedValue.COMPLEX_UNIT_DIP,
-                 dp,
-                 resources.displayMetrics).toInt()
+    private fun getDimensionInPixel(dp: Float): Int = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics).toInt()
 }

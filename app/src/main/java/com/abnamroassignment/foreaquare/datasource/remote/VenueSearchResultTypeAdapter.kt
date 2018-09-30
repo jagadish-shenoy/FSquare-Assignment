@@ -8,6 +8,11 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.lang.reflect.Type
 
+/**
+ * The Forusquare API JSON is heavily nested. JsonDeserializer to rescue.
+ *
+ * TODO Convert the attribute reading from JsonObject to extension methods for readability
+ */
 class VenueSearchResultTypeAdapter : JsonDeserializer<Venues> {
 
     override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Venues {
