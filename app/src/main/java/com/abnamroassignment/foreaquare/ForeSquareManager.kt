@@ -61,31 +61,74 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
 
     override fun onVenueSearchResponse(dataSource: DataSource, venueSearchResult: VenueSearchResult) {
         if (dataSource.isRemoteDataSource()) {
-            if (!venueSearchResult.venues.isEmpty()) {
-                localDataSource.saveSearchResult(venueSearchResult.venues)
-            }
+            handleRemoteSearchResult(venueSearchResult)
         } else {
+            handleLocalSearchResult(venueSearchResult)
+        }
+    }
+
+    override fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult) {
+        if (dataSource.isRemoteDataSource()) {
+            handleRemoteVenueDetailsResult(venueDetailsResult)
+        } else {
+            handleLocalVenueDetailsResult(venueDetailsResult)
+        }
+    }
+
+    fun searchVenues(location: String) {
+        searchVenues(getDataSource(), location)
+    }
+
+    private fun searchVenues(dataSource: DataSource, location: String) {
+        dataSource.searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
+    }
+
+    fun fetchVenueDetails(venue: Venue) {
+        fetchVenueDetails(getDataSource(), venue)
+    }
+
+    private fun fetchVenueDetails(dataSource: DataSource, venue: Venue) {
+        dataSource.fetchVenueDetails(venue.id)
+    }
+
+    private fun getDataSource() = if (connectivityChecker.isNetworkConnected()) remoteDataSource else localDataSource
+
+
+    private fun handleRemoteSearchResult(venueSearchResult: VenueSearchResult) {
+        if (venueSearchResult.isSuccess) {
+            localDataSource.saveSearchResult(venueSearchResult.venues)
+            callback.onVenueSearchResponse(venueSearchResult)
+        } else if (venueSearchResult.networkError) {
+            searchVenues(localDataSource, venueSearchResult.searchLocation)
+        } else {
+            callback.onVenueSearchResponse(venueSearchResult)
+        }
+    }
+
+    private fun handleLocalSearchResult(venueSearchResult: VenueSearchResult) {
+        if (venueSearchResult.isSuccess) {
             syncJobScheduler.scheduleSyncJob()
         }
         callback.onVenueSearchResponse(venueSearchResult)
     }
 
-    override fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult) {
-        if (dataSource.isRemoteDataSource()) {
-            venueDetailsResult.venueDetails?.apply { localDataSource.saveVenueDetails(this) }
+    private fun handleRemoteVenueDetailsResult(result: VenueDetailsResult) {
+        if (result.isSuccess) {
+            localDataSource.saveVenueDetails(result.venueDetails!!)
+            callback.onVenueDetailsResponse(result)
+        } else if (result.networkError) {
+            localDataSource.fetchVenueDetails(result.venueId)
+        } else {
+            callback.onVenueDetailsResponse(result)
         }
-        callback.onVenueDetailsResponse(venueDetailsResult)
     }
 
-    fun searchVenues(location: String) {
-        getDataSource().searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
+    private fun handleLocalVenueDetailsResult(result: VenueDetailsResult) {
+        if (result.isSuccess) {
+            syncJobScheduler.scheduleSyncJob()
+        }
+        callback.onVenueDetailsResponse(result)
     }
-
-    fun fetchVenueDetails(venue: Venue) {
-        getDataSource().fetchVenueDetails(venue.id)
-    }
-
-    private fun getDataSource() = if (connectivityChecker.isNetworkConnected()) remoteDataSource else localDataSource
 }
 
 private fun DataSource.isRemoteDataSource() = this is RetrofitDataSource

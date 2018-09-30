@@ -1,17 +1,16 @@
 package com.abnamroassignment.foreaquare.datasource.remote
 
-import com.abnamroassignment.foreaquare.Status
 import com.abnamroassignment.foreaquare.Venue
-import com.abnamroassignment.foreaquare.VenueSearchResult
+import com.abnamroassignment.foreaquare.Venues
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import java.lang.reflect.Type
 
-class VenueSearchResultTypeAdapter : JsonDeserializer<VenueSearchResult> {
+class VenueSearchResultTypeAdapter : JsonDeserializer<Venues> {
 
-    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): VenueSearchResult {
+    override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): Venues {
 
         val fullResponseJson = json.asJsonObject
 
@@ -19,15 +18,13 @@ class VenueSearchResultTypeAdapter : JsonDeserializer<VenueSearchResult> {
 
         val venuesJson = venueResponseJson.getAsJsonArray("venues")
 
-        val venueList = venuesJson.map {
+        return Venues(venuesJson.map {
             val venueJson = it.asJsonObject
 
             Venue(venueJson.get("id").asString,
                     venueJson.get("name").asString,
                     extractAddressFromLocation(venueJson.get("location").asJsonObject))
-        }.toList()
-
-        return VenueSearchResult(Status.SUCCESS, venueList)
+        }.toList())
     }
 
     private fun extractAddressFromLocation(venueJson: JsonObject?) =

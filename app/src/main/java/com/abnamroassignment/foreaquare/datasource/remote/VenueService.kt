@@ -1,8 +1,6 @@
 package com.abnamroassignment.foreaquare.datasource.remote;
 
-import com.abnamroassignment.foreaquare.Status
-import com.abnamroassignment.foreaquare.VenueDetailsResult
-import com.abnamroassignment.foreaquare.VenueSearchResult
+import com.abnamroassignment.foreaquare.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,16 +12,16 @@ interface VenueService {
     @GET("venues/search")
     fun searchVenues(@Query("near") nearLocation: String,
                      @Query("radius") radius: Int,
-                     @Query("limit") limit: Int): Call<VenueSearchResult>
+                     @Query("limit") limit: Int): Call<Venues>
 
     @GET("venues/{venue_id}")
-    fun getVenueDetails(@Path("venue_id") venueId: String): Call<VenueDetailsResult>
+    fun getVenueDetails(@Path("venue_id") venueId: String): Call<VenueDetails>
 }
 
-val InvalidRequestSearchResult = VenueSearchResult(Status.INVALID_REQUEST, emptyList())
+fun createInvalidRequestSearchResult(searchLocation: String) = VenueSearchResult(searchLocation, Status.INVALID_REQUEST, emptyList())
 
-val NetworkErrorSearchResult = VenueSearchResult(Status.NETWORK_ERROR, emptyList())
+fun createNetworkErrorSearchResult(searchLocation: String) = VenueSearchResult(searchLocation, Status.NETWORK_ERROR, emptyList())
 
-val InvalidRequestVenueDetailsResult = VenueDetailsResult(Status.INVALID_REQUEST, null)
+fun createInvalidRequestVenueDetailsResult(venueId: String) = VenueDetailsResult(venueId, null, Status.INVALID_REQUEST)
 
-val NetworkErrorVenueDetailsResult = VenueDetailsResult(Status.NETWORK_ERROR, null)
+fun createNetworkErrorVenueDetailsResult(venueId: String) = VenueDetailsResult(venueId, null, Status.NETWORK_ERROR)

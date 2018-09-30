@@ -16,17 +16,20 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
 
     override fun searchVenues(location: String, limit: Int) {
         venueService.searchVenues(location, VENUE_SEARCH_RADIUS, limit).enqueue(
-                object : retrofit2.Callback<VenueSearchResult> {
+                object : retrofit2.Callback<Venues> {
 
-                    override fun onFailure(call: Call<VenueSearchResult>?, t: Throwable?) {
-                        callback?.onVenueSearchResponse(this@RetrofitDataSource, NetworkErrorSearchResult)
+                    override fun onFailure(call: Call<Venues>?, t: Throwable?) {
+                        callback?.onVenueSearchResponse(this@RetrofitDataSource,
+                                createNetworkErrorSearchResult(location))
                     }
 
-                    override fun onResponse(call: Call<VenueSearchResult>?, httpResponse: Response<VenueSearchResult>?) {
+                    override fun onResponse(call: Call<Venues>?, httpResponse: Response<Venues>?) {
                         if(httpResponse == null || !httpResponse.isSuccessful || httpResponse.body() == null) {
-                            callback?.onVenueSearchResponse(this@RetrofitDataSource, InvalidRequestSearchResult)
+                            callback?.onVenueSearchResponse(this@RetrofitDataSource,
+                                    createInvalidRequestSearchResult(location))
                         } else {
-                            callback?.onVenueSearchResponse(this@RetrofitDataSource, httpResponse.body()!!)
+                            callback?.onVenueSearchResponse(this@RetrofitDataSource,
+                                    VenueSearchResult(location, Status.SUCCESS, httpResponse.body()!!.list))
                         }
                     }
                 }
@@ -35,13 +38,14 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
 
     override fun fetchVenueDetails(venueId: String) {
         venueService.getVenueDetails(venueId).enqueue(
-                object : retrofit2.Callback<VenueDetailsResult> {
-                    override fun onFailure(call: Call<VenueDetailsResult>, t: Throwable?) {
-                        callback?.onVenueDetailsResponse(this@RetrofitDataSource, NetworkErrorVenueDetailsResult)
+                object : retrofit2.Callback<VenueDetails> {
+                    override fun onFailure(call: Call<VenueDetails>, t: Throwable?) {
+                        callback?.onVenueDetailsResponse(this@RetrofitDataSource,
+                                createNetworkErrorVenueDetailsResult(venueId))
                     }
 
-                    override fun onResponse(call: Call<VenueDetailsResult>, httpResponse: Response<VenueDetailsResult>) {
-                        val venueDetailsResult = extractVenueDetailsResult(httpResponse)
+                    override fun onResponse(call: Call<VenueDetails>, httpResponse: Response<VenueDetails>) {
+                        val venueDetailsResult = extractVenueDetailsResult(venueId, httpResponse)
                         callback?.onVenueDetailsResponse(this@RetrofitDataSource, venueDetailsResult)
                     }
                 }
@@ -50,14 +54,14 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
 
     override fun fetchVenueDetailsSync(venueId: String): VenueDetailsResult {
         val response = venueService.getVenueDetails(venueId).execute()
-        return extractVenueDetailsResult(response)
+        return extractVenueDetailsResult(venueId, response)
     }
 
-    private fun extractVenueDetailsResult(httpResponse: Response<VenueDetailsResult>): VenueDetailsResult {
+    private fun extractVenueDetailsResult(venueId: String, httpResponse: Response<VenueDetails>): VenueDetailsResult {
         return if (!httpResponse.isSuccessful || httpResponse.body() == null) {
-            InvalidRequestVenueDetailsResult
+            createInvalidRequestVenueDetailsResult(venueId)
         } else {
-            httpResponse.body()!!
+            VenueDetailsResult(venueId, httpResponse.body()!!, Status.SUCCESS)
         }
     }
 
@@ -71,8 +75,8 @@ class RetrofitDataSource(context: Context) : DataSource(context) {
     }
 
     private fun createGsonConverter() = GsonConverterFactory.create(GsonBuilder()
-            .registerTypeAdapter(VenueSearchResult::class.java, VenueSearchResultTypeAdapter())
-            .registerTypeAdapter(VenueDetailsResult::class.java, VenueDetailsResultTypeAdapter())
+            .registerTypeAdapter(Venues::class.java, VenueSearchResultTypeAdapter())
+            .registerTypeAdapter(VenueDetails::class.java, VenueDetailsResultTypeAdapter())
             .create())
 
     private fun createClientWithDefaultParams(): OkHttpClient {

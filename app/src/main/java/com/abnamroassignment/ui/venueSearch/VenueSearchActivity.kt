@@ -34,7 +34,8 @@ class VenueSearchActivity : AppCompatActivity(), VenueItemClickCallback {
             when (status) {
                 Status.INVALID_REQUEST -> showSnackbar(R.string.error_invalid_search_request)
 
-                Status.NETWORK_ERROR -> showSnackbar(R.string.error_network_search_reqeust)
+                Status.NETWORK_ERROR,
+                Status.CACHE_MISS -> showSnackbar(R.string.error_network_search_reqeust)
             }
             adapter.venues = venues
         }
@@ -45,7 +46,8 @@ class VenueSearchActivity : AppCompatActivity(), VenueItemClickCallback {
             when (status) {
                 Status.INVALID_REQUEST -> showSnackbar(R.string.error_fetching_venue_details)
 
-                Status.NETWORK_ERROR -> showSnackbar(R.string.error_network_venue_details)
+                Status.NETWORK_ERROR,
+                Status.CACHE_MISS -> showSnackbar(R.string.error_network_venue_details)
 
                 Status.SUCCESS -> VenueDetailsActivity.start(venueDetails!!, this@VenueSearchActivity)
             }
