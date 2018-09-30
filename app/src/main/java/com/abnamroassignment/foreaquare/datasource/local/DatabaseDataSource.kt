@@ -15,22 +15,16 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
         venueDatabase.venueDetailsDao().insertVenueDetails(venueDetails)
     }
 
-    override fun searchVenues(location: String, limit: Int) {
+    override fun searchVenues(location: String, limit: Int): VenueSearchResult {
         val venues = venueDatabase.venuesDao().getVenuesForLocation("%$location%", limit)
-        val result = if (venues.isEmpty()) {
+        return if (venues.isEmpty()) {
             VenueSearchResult(location, Status.NETWORK_ERROR, venues)
         } else {
             VenueSearchResult(location, Status.SUCCESS, venues)
         }
-        callback?.onVenueSearchResponse(this, result)
     }
 
-    override fun fetchVenueDetails(venueId: String) {
-        val venueDetailsResult = fetchVenueDetailsSync(venueId)
-        callback?.onVenueDetailsResponse(this, venueDetailsResult)
-    }
-
-    override fun fetchVenueDetailsSync(venueId: String): VenueDetailsResult {
+    override fun fetchVenueDetails(venueId: String): VenueDetailsResult {
         val venueDetails = venueDatabase.venueDetailsDao().getVenueDetails(venueId)
         val status = if (venueDetails == null) Status.CACHE_MISS else Status.SUCCESS
         return VenueDetailsResult(venueId, venueDetails, status)

@@ -11,5 +11,5 @@ class ConnectivityCheckerImpl(context: Context):ConnectivityChecker {
 
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    override fun isNetworkConnected() = connectivityManager.activeNetworkInfo?.isConnected == true
+    override fun isNetworkConnected() = true//connectivityManager.activeNetworkInfo?.isConnected == true
 }

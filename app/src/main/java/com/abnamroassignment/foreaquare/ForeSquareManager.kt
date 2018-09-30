@@ -6,24 +6,13 @@ import com.abnamroassignment.foreaquare.datasource.remote.RetrofitDataSource
 import com.abnamroassignment.foreaquare.sync.SyncJobScheduler
 import com.abnamroassignment.networking.ConnectivityChecker
 import com.abnamroassignment.networking.ConnectivityCheckerImpl
+import java.util.concurrent.Executors
 
 abstract class DataSource(protected val context: Context) {
 
-    var callback: DataSource.Callback? = null
+    abstract fun searchVenues(location: String, limit: Int): VenueSearchResult
 
-    abstract fun searchVenues(location: String, limit: Int)
-
-    abstract fun fetchVenueDetails(venueId: String)
-
-    abstract fun fetchVenueDetailsSync(venueId: String): VenueDetailsResult
-
-    interface Callback {
-
-        fun onVenueSearchResponse(dataSource: DataSource, venueSearchResult: VenueSearchResult)
-
-        fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult)
-    }
-
+    abstract fun fetchVenueDetails(venueId: String): VenueDetailsResult
 }
 
 abstract class StorageDataSource(context: Context) : DataSource(context) {
@@ -39,12 +28,9 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
                                             private val connectivityChecker: ConnectivityChecker,
                                             private val syncJobScheduler: SyncJobScheduler,
                                             private val localDataSource: StorageDataSource,
-                                            private val remoteDataSource: DataSource) : DataSource.Callback {
+                                            private val remoteDataSource: DataSource) {
 
-    init {
-        localDataSource.callback = this
-        remoteDataSource.callback = this
-    }
+    private val executor = Executors.newSingleThreadExecutor()
 
     constructor(context: Context, callback: ForeSquareManagerCallback) : this(callback,
             ConnectivityCheckerImpl(context),
@@ -59,7 +45,12 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
         fun onVenueDetailsResponse(venueDetailsResult: VenueDetailsResult)
     }
 
-    override fun onVenueSearchResponse(dataSource: DataSource, venueSearchResult: VenueSearchResult) {
+    fun searchVenues(location: String) {
+        executor.submit { searchVenues(getDataSource(), location) }
+    }
+
+    private fun searchVenues(dataSource: DataSource, location: String) {
+        val venueSearchResult = dataSource.searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
         if (dataSource.isRemoteDataSource()) {
             handleRemoteSearchResult(venueSearchResult)
         } else {
@@ -67,28 +58,17 @@ class ForeSquareManager private constructor(private val callback: ForeSquareMana
         }
     }
 
-    override fun onVenueDetailsResponse(dataSource: DataSource, venueDetailsResult: VenueDetailsResult) {
+    fun fetchVenueDetails(venue: Venue) {
+        executor.submit { fetchVenueDetails(getDataSource(), venue) }
+    }
+
+    private fun fetchVenueDetails(dataSource: DataSource, venue: Venue) {
+        val venueDetailsResult = dataSource.fetchVenueDetails(venue.id)
         if (dataSource.isRemoteDataSource()) {
             handleRemoteVenueDetailsResult(venueDetailsResult)
         } else {
             handleLocalVenueDetailsResult(venueDetailsResult)
         }
-    }
-
-    fun searchVenues(location: String) {
-        searchVenues(getDataSource(), location)
-    }
-
-    private fun searchVenues(dataSource: DataSource, location: String) {
-        dataSource.searchVenues(location, VENUE_SEARCH_RESULT_LIMIT)
-    }
-
-    fun fetchVenueDetails(venue: Venue) {
-        fetchVenueDetails(getDataSource(), venue)
-    }
-
-    private fun fetchVenueDetails(dataSource: DataSource, venue: Venue) {
-        dataSource.fetchVenueDetails(venue.id)
     }
 
     private fun getDataSource() = if (connectivityChecker.isNetworkConnected()) remoteDataSource else localDataSource
