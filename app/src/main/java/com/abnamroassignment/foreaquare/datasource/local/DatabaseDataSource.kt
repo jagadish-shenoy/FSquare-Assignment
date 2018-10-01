@@ -10,8 +10,8 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
 
     private val venueDatabase = VenueDatabase.getInMemoryDatabase(context)
 
-    override fun saveSearchResult(venues: List<Venue>) {
-        venueDatabase.venuesDao().insertVenues(*venues.toTypedArray())
+    override fun saveSearchResult(searchKey: String, venues: List<Venue>) {
+        venueDatabase.venuesDao().insertVenues(*venues.map { VenueEntity.fromVenue(searchKey, it) }.toTypedArray())
     }
 
     override fun saveVenueDetails(venueDetails: VenueDetails) {
@@ -21,9 +21,9 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
     override fun searchVenues(location: String, limit: Int): VenueSearchResult {
         val venues = venueDatabase.venuesDao().getVenuesForLocation("%$location%", limit)
         return if (venues.isEmpty()) {
-            VenueSearchResult(location, Status.NETWORK_ERROR, venues)
+            VenueSearchResult(location, Status.NETWORK_ERROR, emptyList())
         } else {
-            VenueSearchResult(location, Status.SUCCESS, venues)
+            VenueSearchResult(location, Status.SUCCESS, venues.map { it.toVenue() })
         }
     }
 

@@ -4,11 +4,10 @@ import android.arch.persistence.room.Database
 import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
-
-import com.abnamroassignment.foreaquare.Venue
 import com.abnamroassignment.foreaquare.VenueDetails
+import com.abnamroassignment.foreaquare.VenueEntity
 
-@Database(entities = [(Venue::class), (VenueDetails::class)], version = 1)
+@Database(entities = [(VenueEntity::class), (VenueDetails::class)], version = 1)
 abstract class VenueDatabase : RoomDatabase() {
 
     abstract fun venuesDao(): VenuesDao

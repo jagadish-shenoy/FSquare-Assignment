@@ -72,7 +72,7 @@ class FourSquareManager private constructor(private val callback: ForeSquareMana
     /**
      * Decides the next step for the [VenueSearchResult] fetched from network
      *
-     * if success -> notify the callback
+     * if success ->save in data base + start a background sync + notify the callback
      * if network error -> check if the data can be fetched from local storage
      * any other error -> can't help just notify the callback
      *
@@ -80,7 +80,7 @@ class FourSquareManager private constructor(private val callback: ForeSquareMana
     private fun handleRemoteSearchResult(venueSearchResult: VenueSearchResult) {
         when {
             venueSearchResult.isSuccess -> {
-                localDataSource.saveSearchResult(venueSearchResult.venues)
+                localDataSource.saveSearchResult(venueSearchResult.searchLocation, venueSearchResult.venues)
                 callback.onVenueSearchResponse(venueSearchResult)
             }
             venueSearchResult.networkError -> searchVenues(localDataSource, venueSearchResult.searchLocation)

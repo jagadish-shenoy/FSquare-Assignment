@@ -17,9 +17,9 @@ abstract class DataSource(protected val context: Context) {
  */
 abstract class StorageDataSource(context: Context) : DataSource(context) {
 
-    abstract fun saveSearchResult(venues: List<Venue>)
+    abstract fun saveSearchResult(searchKey: String, venues: List<Venue>)
 
     abstract fun saveVenueDetails(venueDetails: VenueDetails)
 
-    abstract fun getAllVenueIds(): List<String>
+    abstract fun getCachedVenueIds(): List<String>
 }

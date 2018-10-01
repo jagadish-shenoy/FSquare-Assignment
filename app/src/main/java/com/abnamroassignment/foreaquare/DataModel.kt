@@ -8,8 +8,18 @@ import kotlinx.android.parcel.Parcelize
 /**
  * Represents a Venue for the Search result
  */
+
+data class Venue(val id: String, val name: String, val address: String)
+
 @Entity
-data class Venue(@PrimaryKey val id: String, val name: String, val address: String)
+data class VenueEntity(@PrimaryKey val id: String, val name: String, val address: String, val searchKey: String) {
+
+    companion object {
+        fun fromVenue(searchKey: String, venue: Venue) = VenueEntity(venue.id, venue.name, venue.address, searchKey)
+    }
+
+    fun toVenue() = Venue(id, name, address)
+}
 
 /**
  * Wrapper class for List<Venue> - to simplify JSON parsing
