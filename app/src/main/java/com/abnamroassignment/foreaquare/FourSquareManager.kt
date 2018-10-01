@@ -33,6 +33,10 @@ class FourSquareManager private constructor(private val callback: ForeSquareMana
             DatabaseDataSource(context),
             RetrofitDataSource(context))
 
+    init {
+        syncJobScheduler.scheduleSyncJob()
+    }
+
     interface ForeSquareManagerCallback {
 
         fun onVenueSearchResponse(venueSearchResult: VenueSearchResult)
@@ -95,9 +99,6 @@ class FourSquareManager private constructor(private val callback: ForeSquareMana
      * else -> cannot find the requested data in storage, no need to sync
      */
     private fun handleLocalSearchResult(venueSearchResult: VenueSearchResult) {
-        if (venueSearchResult.isSuccess) {
-            syncJobScheduler.scheduleSyncJob()
-        }
         callback.onVenueSearchResponse(venueSearchResult)
     }
 
@@ -127,9 +128,6 @@ class FourSquareManager private constructor(private val callback: ForeSquareMana
      * else -> cannot find the requested data in storage, no need to sync
      */
     private fun handleLocalVenueDetailsResult(result: VenueDetailsResult) {
-        if (result.isSuccess) {
-            syncJobScheduler.scheduleSyncJob()
-        }
         callback.onVenueDetailsResponse(result)
     }
 

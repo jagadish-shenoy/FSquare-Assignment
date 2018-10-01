@@ -18,7 +18,8 @@ class VenueSyncService : JobService() {
 
         syncExecutor.submit {
             ForesquareSyncManager(applicationContext).syncLocalVenuesWithServer()
-            jobFinished(params, false)
+            //Keep rescheduling - every day job!
+            jobFinished(params, true)
             Log.i(tag, "Background venue sync finished.")
         }
         return true
