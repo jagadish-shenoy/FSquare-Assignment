@@ -16,7 +16,8 @@
             android:name=".ui.venueSearch.VenueSearchActivity"
             android:label="@string/activity_venue_search"
             android:windowSoftInputMode="stateAlwaysHidden"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,7 +26,8 @@
         </activity>
         <activity
             android:name=".ui.venueDetails.VenueDetailsActivity"
-            android:parentActivityName=".ui.venueSearch.VenueSearchActivity" />
+            android:parentActivityName=".ui.venueSearch.VenueSearchActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".foreaquare.sync.VenueSyncService"
