@@ -33,5 +33,5 @@ class DatabaseDataSource(context: Context) : StorageDataSource(context) {
         return VenueDetailsResult(venueId, venueDetails, status)
     }
 
-    override fun getAllVenueIds() = venueDatabase.venuesDao().getAllVenueIds()
+    override fun getCachedVenueIds() = venueDatabase.venueDetailsDao().getAllVenueIds()
 }

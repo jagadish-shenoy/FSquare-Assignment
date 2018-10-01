@@ -14,4 +14,7 @@ interface VenueDetailsDao {
 
     @Query("Select * from venuedetails where id = :id")
     fun getVenueDetails(id: String): VenueDetails?
+
+    @Query("select id from venuedetails")
+    fun getAllVenueIds(): List<String>
 }

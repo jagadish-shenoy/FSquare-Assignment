@@ -17,7 +17,7 @@ class ForesquareSyncManager(private val remoteDataSource: DataSource,
             DatabaseDataSource(context))
 
     fun syncLocalVenuesWithServer() {
-        localDataSource.getAllVenueIds().forEach {
+        localDataSource.getCachedVenueIds().forEach {
             val venueDetailsResult = remoteDataSource.fetchVenueDetails(it)
             venueDetailsResult.venueDetails?.apply {
                 localDataSource.saveVenueDetails(this)
