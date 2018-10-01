@@ -8,7 +8,7 @@
 
     <string name="error_network_search_reqeust">Error, Please check the network connection!</string>
 
-    <string name="error_fetching_venue_details">Error, count not fetch venue details</string>
+    <string name="error_fetching_venue_details">Error, could not fetch venue details</string>
 
     <string name="error_network_venue_details">Error, Please check the network connection!</string>
 
